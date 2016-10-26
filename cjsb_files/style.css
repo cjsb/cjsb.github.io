@@ -1,0 +1,135 @@
+body {
+	background-color: #FFFFFF;
+	font-size: 12pt;
+}
+
+#page {
+	
+	margin: auto;
+	width: 900px;
+	margin-top: 60px;
+	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;	
+}
+
+#name {
+	font-size: 24pt;	
+	font-weight: bold;
+	padding-left: 205px;
+	width: 695px;
+}
+.contact {
+	width: 695px;
+	padding-top: 6px;
+	color: #666;
+	padding-left: 205px;
+}
+#sidebar {
+	width: 180px;
+	float: left;
+	padding-left: 0px;
+	margin-top: 0px;
+}
+
+#content {
+	width: 900px;
+	float: left;
+	font-size: 12pt;
+	padding-left: 0px;
+	padding-top: 25px;
+}
+
+#update {
+	font-size: 10pt;	
+	font-style: italic;
+}
+
+#logo_eth{
+	float: right;
+	width: 253px;
+}
+
+#logo_cgl{
+	float: left;
+	width: 296px;
+	padding-left: 25px;
+}
+
+.sectionTitle {
+	font-size: 16pt;
+	font-weight: bold;
+	color: #3465a4;
+	padding-bottom: 10px;
+}
+
+.sectionText 
+{
+	margin-left: 50px;
+}
+
+.menuItem {
+	margin-top: 5px;
+}
+
+.section {
+	padding-bottom: 25px;	
+}
+
+.student 
+{
+
+}
+
+.publication
+{
+	padding-bottom: 50px;
+}
+
+.pubTitle
+{
+	font-weight: bold;
+	font-size: 14pt;
+	padding-bottom: 4px;
+}
+
+.pubAbstract
+{
+	margin-left: 25px;
+}
+
+.pubAuthors
+{
+	margin-left: 1px;
+	font-style: italic;
+	padding-bottom: 2px;
+	margin-left: 25px;
+}
+
+.pubVenue
+{
+	padding-bottom: 2px;
+	margin-left: 25px;
+}
+
+.pubLinks
+{
+	font-size: 13pt;
+	padding-bottom: 10px;
+	font-weight: bold;
+	margin-left: 25px;
+}
+
+.pubImages
+{
+	padding-bottom: 10px;
+	margin-left: 25px;
+}
+
+a:link , a:visited, a:active{
+	text-decoration: none;
+	color: #3465a4;
+}
+
+a:hover {
+	text-decoration: underline;
+	color: #3465a4;
+}
