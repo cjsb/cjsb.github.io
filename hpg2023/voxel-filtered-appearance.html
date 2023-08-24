@@ -34,16 +34,7 @@
 					<i class="fa fa-window-maximize" style="font-size:30px;"></i> <a style="text-decoration:none" href="https://doi.org/10.2312/hpg.20231132">DOI</a> 
 				</a>
 			</p>
-			<!-- <i class="fa fa-link" style="font-size:27px;"></i> -->
-			<!--<div style="width:100%;display:table;;">
-				<img src="1.jpg">
-				<img src="2.jpg">
-				<img src="3.jpg">
-				<img src="4.jpg">
-			</div>
-			<p align="justify">
-				Fig 1. Snapshots of an animated implicit surface at timesteps $68, 150, 265$ and $330$ showing in red the regions that were evaluated in each timestep to sparsely update a $1024^3$ voxelization of the scene only as and where is necessary to maintain bounded error in the surface. For comparison, existing approaches would color the entire surface red in each timestep, thus wasting resources in static or slowly-evolving areas far from the motion. The runtime of our method depends on the moving surface area per frame and achieves here a $\sim3\times$ speedup compared to full per-frame re-evaluation at a temporal error tolerance of $\delta=0.01$.
-			</p>-->
+			
 			<h2>Abstract</h2>
 			<p align="justify">
 			Volumetric representations allow filtering of mesh-based complex 3D scenes to control both the efficiency and quality of rendering. Unfortunately, directional variations in the visual appearance of a volume still hinder its adoption by the real-time rendering community. To alleviate this problem, we propose two simple structures: (1) a virtual mesh to encode the directional distribution of colors and normals, and (2) a low-resolution subgrid of opacities to encode directional visibility. We precompute these structures from a mesh-based scene into a regular voxelization. During display, we use simple rendering methods on the two structures to compute the image contribution of the appearance of a visible voxel, optimizing for efficiency and/or quality. The improved visual results compared to previous work are a step forward to the integration of volumetric representations in real-time rendering.</p>
@@ -58,30 +49,6 @@
 				<iframe width="100%" height="100%" src="voxel-filtered-appearance.mp4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 			</div>
 			
-			<!--<h2>Citation</h2>
-<pre>
-@article {jazar2023,
-	author     = {Jazar, Kavosh and Kry, Paul},
-	title      = {Temporal Set Inversion for Animated Implicits},
-	publisher  = {Association for Computing Machinery},
-	journal    = {ACM Trans. Graph.},
-	address    = {New York, NY, USA},
-	doi        = {10.1145/3592448},
-	year       = {2023},
-	volume     = {42},
-	month      = {8},
-	number     = {4},
-}
-</pre>
-			<h2>Supplemental Video</h2>
-			<div id="sup_video">
-				<iframe width="100%" height="100%" src="https://www.youtube.com/embed/Jlor8zIZbPM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-			</div>
-			<h2>Acknowledgements</h2>
-			<p align="justify">
-				We'd like to thank Inigo Quilez, David P. Sanders, and Luc Jaulin for their inspiring work, as well as Joey Litalien, Michael Kenzel, Connor Fitzgerald, Kenny Erleben, and the anonymous reviewers for their help. We also acknowledge the support of the Natural Sciences and Engineering Research Council of Canada (NSERC).
-				Our test scenes are based on the work of <a href=https://www.shadertoy.com/view/ldl3zN>Inigo Quilez</a>,  <a href=https://www.shadertoy.com/view/wlKXWc>yuntaRobo</a>, <a href=https://www.shadertoy.com/view/sdsXWr>The Art of Code</a>, and <a href=https://www.shadertoy.com/view/ldl3zN>Mariano Merchante</a>.
-			</p>-->
 		</div>
 	</body>
 	<footer></footer>
