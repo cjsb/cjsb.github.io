@@ -1,0 +1,361 @@
+**IFT 3355 - TP2: Lancer de rayons - 20%**
+
+<big align="justify">
+	<center>Date disponible: Vendredi 09 Février à 23h59</center>
+
+	<center>Date de remise: Jeudi 14 Mars à 23h59</center>
+
+	<center>Équipe de deux au maximum</center>
+</big>
+
+# Introduction
+
+Dans ce TP vous implémenterez un algorithme “simple” de lancer de rayons (un ou plusieurs rayons par pixel) qui calcule l'éclairage local, les ombres, la réflexion et la réfraction à l'aide d'une structure accélératrice.
+
+Vous devriez en profiter pour subdiviser le travail ainsi que de progresser pas à pas. Commencez par implémenter les algorithmes en ordre de complexité. Ensuite, vous comprendrez beaucoup mieux les problèmes soulevés et vous serez plus aptes à résoudre le problème en entier. Jadis, on appelait cette approche en anglais “throw-away code”. Un avantage de cette approche est lié au fait que  si la partie complexe de votre code ne fonctionne pas, vous pouvez revenir en arrière et la partie de base fonctionnera encore.
+
+
+!!! WARNING
+    Prenez-vous d'avance!!! Ce projet peut prendre énormément de temps.
+
+## Description du squelette de code
+
+L'entrée du programme est définie dans <mark style="background-color:lightcoral">main.cpp</mark>. Le programme utilise <mark style="background-color: yellow">Parser</mark> (défini dans <mark style="background-color:lightcoral">parser.h</mark> et <mark style="background-color:lightcoral">parser.cpp</mark>) pour analyser les fichiers de la scène (dans le répertoire <mark style="background-color:yellowgreen">data/scene/</mark>). Ce dernier s'occupe d'initialiser la scène (définie dans <mark style="background-color:lightcoral">scene.h</mark>) avec les paramètres et objets spécifiés.
+
+Ensuite, <mark style="background-color: yellow"> Raytracer </mark> (défini dans <mark style="background-color:lightcoral">raytracer.h</mark> et <mark style="background-color:lightcoral">raytracer.cpp</mark>) est utilisé pour *rendre* la scène dans un objet <mark style="background-color:yellow">Frame</mark> qui produit deux fichiers *.bmp* en sortie (via <mark style="background-color:lightcoral">frame.h</mark>). La première image sera le shading tandis que le deuxième sera votre buffer de profondeur. La scène peut contenir des objets géométriques (sphères, quads, etc.), des lumières ainsi que quelques paramètres globaux tels que la lumière ambiante.
+
+Il y a trois répertoires dans <mark style="background-color:yellowgreen">data/</mark> : <mark style="background-color:yellowgreen">scene/</mark>, <mark style="background-color:yellowgreen">ref/</mark>et <mark style="background-color:yellowgreen">out/</mark>. Le répertoire <mark style="background-color:yellowgreen">scene/</mark> contient les fichiers de scène au format <mark style="background-color:rgb(255, 136, 0)">*.ray</mark> décrivant les paramètres de la scène suivants : *container, dimension, samples_per_pixel, max_ray_recursion, ambient_ligth, Perspective, LookAt, Material, PushMatrix, PopMatrix, Translate, Rotate, Scale, Sphere, Plane, Cylindre, Mesh* et *Light*. Le fichier <mark style="background-color:rgb(255, 136, 0)">all_at_once.ray</mark> est commentés afin d'expliquer le format. Dans le répertoire <mark style="background-color:yellowgreen">ref/</mark> se trouvent des résultats de référence afin que vous puissiez comparer vos résultats. Enfin, dans le répertoire <mark style="background-color:yellowgreen">out/</mark>, vous trouverez les images générées suite à l'exécution.
+
+On ne s'attend pas à ce que vos résultats soient identiques mais ils devraient bien entendu “ressembler” fortement aux images de références.
+
+**Votre travail** sera restreint aux fichiers <mark style="background-color:lightcoral">object.cpp</mark>, <mark style="background-color:lightcoral">raytracer.cpp</mark> <mark style="background-color:lightcoral">container.cpp</mark> et <mark style="background-color:lightcoral">aabb.cpp</mark>. Vous êtes **vivement** encouragés à regarder les fichiers <mark style="background-color:lightcoral">*.h</mark> afin de bien comprendre les classes C++ ce qui vous aidera avec votre code. Les fichiers <mark style="background-color:lightcoral">frame.\*</mark>, <mark style="background-color:lightcoral">parser.\*</mark> et <mark style="background-color:lightcoral">resource_manager.\*</mark> sont moins importants, mais éducatifs.
+
+
+Les outils mathématiques de base tels que les vecteurs et les matrices sont fournis par la librairie <mark style="background-color:lightcoral">linalg.h</mark>. (Voir [Appendix])
+
+## Installation
+
+La première étape est de télécharger Visual Studio Code pour votre OS.
+Plusieurs resources existent en ligne pour vous aider durant l'installation.
+
+### Windows
+
+**Compilateur C++:**
+Télécharger un compilateur C++ avec VS 2022, WSL ou MinGW.
+
+**CMake**:
+Installer CMake sur le site web. Lors de l'installation, bien cocher l'ajout de l'exécutable CMake dans les variables d'environnement.
+
+### Linux
+
+**Compilateur C++:**
+Utiliser votre package manager pour installer `gdb`.
+
+**CMake**:
+Installer CMake grâce à votre package manager également.
+
+## Configuration
+
+Lancez Visual Studio Code. Installer les extensions "C/C++" et "C/C++ Extension Pack".
+
+Ensuite, vous pourez ouvrir le dossier contenant le projet CMake, en faisant <mark style="background-color:aquamarine" > Open Folder...</mark>. À l'ouverture du dossier par Visual studio code, vous devriez voir apparaitre une petite fenêtre de configuration CMake. Veuilliez sélectionner un des compilateurs dans la liste proposée.
+
+Vous devriez voir la version du compilateur en bas à gauche de votre écran. Cliquez sur <mark style="background-color:aquamarine" >CMake: [BUILD_TYPE]: STATUS</mark> pour configurer le mode de compilation: <mark style="background-color:antiquewhite">Debug</mark> compile votre code sans optimisation, mais permettre d'être couplé avec un Debugger. <mark style="background-color:antiquewhite">Release</mark> optimise l'exécution du code, mais enlève tous commentaires pouvant aider le développeur. <mark style="background-color:antiquewhite">RelWithDebInfo</mark> est un entre-deux.
+
+Vous pouvez compiler le projet en cliquant sur "build". Si tout se passe bien, vous devriez voir le code de sortie 0.
+
+Pour lancer votre programme, ouvrez votre terminal et écrivez l'exécutable avec le nom de la scène.
+
+```bash
+#Linux
+./RAY [scene].ray
+
+#Windows
+RAY.exe [scene].ray
+```
+
+!!! WARNING
+    **Windows** : Si vous obtenez une erreur avec *cmake*, veuillez essayez en mode administrateur.
+
+!!! tip
+    Utilisez RelWithDebInfo lorsque vous avez une version stable afin de progresser plus rapidement.
+
+# Devoir
+
+Nous vous recommandons fortement d'implémenter les algorithmes en ordre de complexité. L'algorithme doit lancer des rayons primaires dans la scène qui génèreront des rayons d'ombre et d'autres rayons secondaires. Notez que le rendu de scènes complexes composées de plusieurs primitives peut prendre du temps! 
+
+!!! WARNING
+    Ne changez aucun des fichiers de scène. Nous comparerons vos résultats avec les résultats sur nos propres scènes de référence pour évaluer votre travail.
+
+## Premiers pas [10%]
+
+!!! note
+    Pré-requis: **Aucun**
+
+1. `raytracer.cpp - Raytracer::render` Implémentez les parties manquantes de `Raytracer::render` pour lancer des rayons de façon simple pour tous les pixels de l'image en utilisant la position de la caméra et les coordonnées de chaque pixel. Vous pouvez tester votre code en recalculant le pixel comme l'intersection entre le rayon et le plan de l'image et vérifier que vous obtenez les bonnes coordonnées. 
+
+![Définition du Jitter Radius. Les unités sont relatives à la taille du pixel. 0.5 correspond à un échantillonnage uniforme.](pixel.png width=200px)
+
+!!! tip
+    tan() prend des radians plutot que des degrés. Utilisez deg2rad() pour la conversion.
+
+!!! tip
+    Tous les rayons dont les coordonnées sont exprimées dans le repère monde doivent avoir une direction normalisée dû à la convention adoptée dans notre moteur de rendu.
+
+!!! tip
+    Utilisez les fonctions dans `basic.h - rand*()` pour y arriver.
+
+2. `container.cpp - Naive::intersect` Implémentez la fonction d'intersetion pour le contenant "Naive". Mettez à jour la profondeur en fonction de l'intersection la plus rapproché. (N'implémentez pas l'intersection AABB pour le moment)
+
+3. `raytracer.cpp - Raytracer::trace` Mettez à jour les couleurs et le buffer de sortie s'il y a intersection en fonction de `raytracer.cpp - Raytracer::shade`. (Ignorez le lancer de rayons secondaires pour la réflexion et la réfraction pour le moment. Laissez `raytracer.cpp - Raytracer::shade` vide pour le moment).
+
+## Test d'intersection [20%]
+
+!!! note
+    Pré-requis: **Premiers pas**
+
+Vous devez implémenter les algorithmes d'intersections pour les quatre géométries: Quad, Sphere, Cylinder, Mesh dans le système de coordonnées locales.
+
+!!! tip
+    Prenez soin d'inverser les normales. On suit la convention suivante: Les normales doivent pointer dans le sens opposé du rayon incident.
+
+* `object.h - Quad::local_intersect`: Soyez sûrs de couvrir tous les scénarios (aucun ou le point d'intersection le plus rapprochée de l'origine du rayon). Respectez les contraintes associées à la géométrie. Mettez à jour le point d'intersection avec la normale correspondante dans le repère local.
+
+!!! tip
+    Faites attention au cas lorsque le rayon est parallèle au plan de support.
+
+* `object.h - Sphere::local_intersect`: Soyez sûrs de couvrir tous les scénarios d'intersections possibles (aucun ou le point d'intersection le plus rapprochée de l'origine du rayon). Respectez les contraintes associées à la géométrie. Mettez à jour le point d'intersection avec la normale correspondante dans le repère local.
+
+!!! tip
+    Faites attention lorsque l'origine du rayon est à l'intérieur de la sphère.
+
+* `object.h - Cylinder::local_intersect`: Soyez sûrs de couvrir tous les scénarios d'intersections possibles (aucun ou le point d'intersection le plus rapprochée de l'origine du rayon).Le cylindre est considéré "vide" et sans base. Respectez les contraintes associées à la géométrie. Mettez à jour le point d'intersection avec la normale correspondante dans le repère local. 
+
+!!! tip
+    Faites attention au cas où le rayon est parallèle à la surface du cylindre.
+
+* `object.h - Maillage::local_intersect`: Cette fonction calcule le point d'intersection d'un rayon avec un maillage. Dans notre cas, tous les maillages sont formés de triangles. Pour chaque triangle, vous devez déterminer si le point est à l'intérieur à l'aide de la fonction `Mesh::intersect_triangle`. Si tel est le cas, mettez à jour le point d'intersection avec la normale correspondante en interpolant les normales associées à chaque sommet.
+
+!!! tip
+    Faites l'interpolation des normales et coordonnées de texture en fonction de la position sur le triangle.
+
+La profondeur d'intersection est affiché dans les fichiers <mark style="background-color:rgb(255, 136, 0)">depth.bmp</mark>. Comparez vos images de profondeur avec celle de référence.
+
+## Structure accélératrice [20%]
+
+!!! note
+    Pré-requis: **Test d'intersection (au moins un algorithme implémenté)**
+
+### AABB (Axis-Aligned Bounding Box) [10%]
+
+Implémentez les algorithmes suivants:
+
+* `aabb.cpp - retriece_corners`: Retrouvez les huit coins associés au AABB.
+
+* `aabb.cpp - construct_aabb`: Construisez un AABB avec le plus petit volume englobant la liste de points fournis.
+
+* `object.h - *:compute_aabb`: Calculez la boite englobante dans le repère __global__ associé à chaque géométrie. Construisez un AABB avec le plus petit volume possible pour chaque géométrie. Utilisez les fonctions précédentes pour y arriver.
+
+!!! tip
+    Cylindre/Sphère: Pour y arriver, nous allons passer par une approximation puisque la solution exacte est un peu plus compliquée. Donc, en premier lieu, vous devez calculer le AABB dans l'espace local. Ensuite, à partir du AABB, reprojetez les coins dans le repère global. Construisez le AABB final à partir des points transformés.
+
+!!! tip
+    Quad: Assurez-vous que le AABB ait un volume. Ajoutez un petit epsilon au besoin.
+
+* `aabb.cpp - AABB::intersect`: Implémentez l'algorithme d'intersection entre le rayon et le AABB. Cette fonction ne retourne que vrai ou faux en fonction de l'intersection. Faites attention parce que cette fonction  pourrait permettre de grandement réduire le temps de calcul.
+
+!!! tip
+    Assurez-vous que cette fonction soit optimisée. Évitez les opérations inutiles et les conditions en trop. Cette fonction est essentielle afin d'accélérer le raytracer.
+
+### Naive [5%]
+
+!!! note
+    Pré-requis: **AABB**
+
+`container.cpp - Naive::intersect`: Implémentez la fonction d'intersetion pour le contenant "Naive". Mettez à jour la profondeur en fonction de l'intersection la plus rapprochée. Faites une intersection avec le AABB avant d'effectuer l'intersection plus couteuse avec la géométrie.
+
+Vous devriez observer une accélération notable si vous avez implémenté les algorithmes AABB ci-haut dans la plupart des cas. Certains cas sont dégénérées... Pensez-y!
+
+### BVH (Bounding Volume Hierarchies) (5%)
+
+!!! note
+    Pré-requis: **AABB**
+
+![Structure BVH avec Arbre Binaire](bvh.png width=250px)
+
+`container.cpp - BVH::intersect`: Implémentez la fonction d'intersection pour le contenant "BVH". Ce contenant peut avoir plusieurs représentations, mais nous allons le représenter à l'aide d'un arbre binaire. Parcourez l'arbre en profondeur. S'il s'agit d'une feuille, effectuer l'intersection avec la géométrie. Sinon, parcourez les enfants. Si le rayon intersecte l'un de leurs AABBs, visitez leurs enfants également et répétez les opérations.
+
+Les structures BVH sont l'une des structures les plus utilisées en raytracing pour accélérer les temps de calculs. (ex: Les nouvelles cartes Nvidia RTX implémentent ces algorithmes directement sur les cartes) Il existe plusieurs variantes avec plusieurs compromis. La version que vous avez programmez n'est pas du tout optimale dans l'état. En conséquence, le temps d'accélération n'est pas incroyable. Par contre, vous avez déjà une base pour comprendre toutes les dérivations.
+
+## Shading
+
+!!! note
+    Pré-requis: **Test d'intersection (au moins un algorithme implémenté)**
+
+### Éclairage local [10%]
+
+Implémentez la partie manquante de `raytracer.cpp - Raytracer::shade` qui réalise le calcul d'éclairage permettant de trouver la couleur à un point. Vous devez calculer les composantes ambiante, diffuse et spéculaire du modèle du cours (spéculaire de Blinn). Voyez cette partie comme l'étape déterminant la couleur à un point où le rayon intersecte la scène. (Ignorez l'ombrage pour le moment.) Renseignez-vous sur les paramètres en lisant le code fourni.
+
+Lorsque cette partie est complétée, vous devriez avoir une image colorée avec de l'éclairage local. Vérifiez votre résultat avec les images de référence dans `color.bmp`.
+
+### Ombrage [5%]
+
+!!! note
+    Pré-requis: **Éclairage local**
+
+Implémentez le calcul des rayons d'ombre dans `raytracer.cpp - Raytracer::shade` et mettez à jour le calcul d'éclairage en fonction. Les rayons d'ombre doivent être émis à partir d'un point pour lequel vous calculez l'éclairage local, afin de déterminer quelles sources lumineuses contribuent à l'éclairage de ce point. Prenez bien soin d'exclure l'origine du rayon des points d'intersection (problème d'acné de surface) et les intersections plus loin que la source. Souvenez-vous que le point d'intersection pourrait être sur le même objet si celui-ci n'est pas convexe. Si le point s'avère être dans l'ombre, le terme d'éclairage devrait être de 0 pour cette source de lumière.
+
+!!! tip
+    Faire attention au problème d'acné.
+
+### Pénombre [10%]
+
+!!! note
+    Pré-requis: **Ombrage**
+    
+
+![Cône d'intersection avec la lumière sphérique.](penombre.png width=400px)
+
+Implémentez la pénombre pour les lumières sphériques entre le point d'intersection et la lumière. Calculez l'ombrage comme précédemment, mais inclure un facteur d'occlusion en fonction du nombre de rayon qui atteint la lumière. Pour y arriver, prenez uniformément une direction à l'intérieur du cône entre le point d'intersection et la lumière sphérique. Au lieu de simplement mettre la contribution à 0, remplacez ce dernier avec le facteur d'occlusion.
+
+Enfin, moyennez la couleur récoltée en fonction du nombre de rayons envoyés.
+!!! tip
+    Utilisez les fonctions dans `basic.h - rand*()` pour y arriver.
+
+### Réflexion miroir [5%]
+
+!!! note
+    Pré-requis: **Éclairage local**
+
+Implémentez les rayons secondaires de réflexion dans `raytracer.cpp - Raytracer::trace`. Utilisez vos notes de cours pour déterminer la nouvelle direction du rayon. Une fois que vous avez votre résultat. Mettez à jour le shading pour le point d'intersection en pondérant selon la couleur réfléchie.
+
+### Réfraction [5%]
+
+!!! note
+    Pré-requis: **Éclairage local**
+
+Implémentez les rayons secondaires de réfraction dans `raytracer.cpp - Raytracer::trace`. Utilisez vos notes de cours pour déterminer la nouvelle direction du rayon. Prenez notes que toutes nos géométries sont des surfaces et non des volumes. Une fois que vous avez votre résultat. Mettez à jour le shading pour le point d'intersection en pondérant selon la couleur transmise.
+
+!!! tip
+    Les géométries sont remplies d'air à l'intérieur ce qui veut dire que la réfraction se fait uniquement à la surface. On fait l'approximation qu'on passe toujours de l'air au matériel en question lors de l'intersection.
+
+### Texture [15%]
+
+!!! note
+    Pré-requis: **Éclairage local**
+
+#### UV - Mapping [10%]
+
+Modifiez les fonctions d'intersection pour inclure les coordonnées UV lors de l'interscetion.
+
+![Coordonnées UV](color.bmp width=400px)
+
+Vous devriez le faire pour les quatres différentes géométries.
+
+![Coordonnées UV - Quad](quad_uv.png width=250px)
+
+* `object.h - Quad::local_intersect`: Lorsqu'il y a intersection, il faut mettre à jour les coordonnées UV en fonction de la surface de la géométrie. Utilisez les coordonnées dans le plan XY afin de paramétriser la surface. 
+
+![Coordonnées UV - Sphere](sphere_uv.png width=250px)
+
+* `object.h - Sphere::local_intersect`: Lorsqu'il y a intersection, il faut mettre à jour les coordonnées UV en fonction de la surface de la géométrie. Utilisez les coordonnées sphériques pour y arriver.
+
+!!! tip
+    Attention aux pôles...
+
+![Coordonnées UV - Cylindre](cylinder_uv.png width=250px)
+
+* `object.h - Cylinder::local_intersect`: Lorsqu'il y a intersection, il faut mettre à jour les coordonnées UV en fonction de la surface de la géométrie. Utilisez les coordonnées cylindriques pour y arriver.
+
+![Coordonnées UV - Mesh](mesh_uv.png width=400px)
+
+* `object.h - Mesh::local_intersect`: Lorsqu'il y a intersection, il faut mettre à jour les coordonnées UV en fonction de la surface de la géométrie. Faites l'interpolation des coordonnées de texture pour y arriver tel que vous l'avez fait pour les normales.
+
+#### Couleur [5%]
+
+Modifier `raytracer.cpp - Raytracer::shade` Calculez la couleur aux coordonnées UV dans la texture si cette dernière est présente. Faites attention! Les couleurs de la texture n'est pas normalisée [0..1], mais entre [0..255] dû à la librairie <mark style="background-color:lightcoral">bitmap.image.h</mark>. Modifiez le reste de l'algorithme d'éclairage en fonction du point de couleur. Si la texture est absente, prenez la couleur de `color_albedo`.
+
+# Information Importante
+
+## Commentaires
+
+Expliquez brièvement votre code à l'aide de commentaires. Nous nous attendons à ce que les commentaires soient complets et que vous fournissez une explication pour toutes les équations que vous utilisez. Par exemple, expliquez en quelques lignes les dérivations afin d'obtenir les différentes équations. Faites que votre code se maintienne sans ressource extérieure.
+
+!!! WARNING
+    Si les commentaires ne sont pas complets ou excessivement longs, nous serons plus sévères lors de la correction. NE SOUS-ESTIMEZ PAS CETTE PARTIE.
+
+## Remise
+
+!!! error
+    Ajouter vos noms ainsi que vos matricules dans le README.
+
+Mettez votre code dans un fichier zip nommé en fonction de vos codes d'accès (exemple pour équipe de 3: codeacces1_codeacces2_codeacces3.zip). Ce code d'accès est le même que vous utilisez pour vous connecter à Studium.
+
+![Exemple](zip.png)
+
+Voici les fichiers à inclure dans le fichier zip.
+
+![Fichiers à remettre](fichier_remise.png)
+
+## Efficacité
+
+La vitesse d'exécution de votre solution n'est pas directement évaluée. Par contre, une solution particulièrement lente pourrait indiquer une erreur d'implémentation ou des calculs inutiles qui pourrait causer une perte de points. Pour référence, pour <mark style="background-color:rgb(255, 136, 0)">all_at_once.ray</mark>, on s'attend à ce que le temps d'exécution ne dépasse pas 30s.
+
+# Appendice
+
+## Calcul vectoriel
+
+La librairie <mark style="background-color:lightcoral">linalg.h</mark> est particulièrement utile parce qu'elle implémente plusieurs fonctions pratiques en rendu. Voici un bref exemple des fonctions qui vous seront pertinentes.
+
+```cpp
+#include "linalg.h"
+using namespace linalg::aliases
+
+double3 a;
+double3 b = {0,0,0};
+double3 c{0};
+double scalar = 2;
+double3 d = a + b; //Addition traditionnelle de vecteurs ignorant la 4e composante (fonctionne aussi avec la soustraction)
+double e = dot(a,b); //Produit scalaire de a et b
+double3 f = cross(a,b) //Produit vectoriel de a et b
+double3 g = scalar * a; //Multiplication du vecteur a par un scalaire (fonctionne aussi avec la division)
+g += a; //Auto addition
+a[0]; //La premiere composante du vecteur
+double l = length(a); //la norme du vecteur
+double l2 = length2(a); //la norme au carre du vecteur
+Vector h = normalize(a); //le vecteur a avec une longueur unitaire (ne modifie pas le vecteur a)
+```
+
+
+Pour les autres fonctions, il est conseillé de jeter un oeil au code source (sous <mark style="background-color:yellowgreen">extern/</mark> ainsi que https://github.com/sgorsten/linalg.
+
+## C++
+
+Bien que le devoir soit en C++, ne vous inquiétez pas trop. Comme la grande majorité du code est déjà écrite pour
+vous, les notions de C++ nécessaires sont assez limitées. Les pointeurs et les références représentent une grosse
+partie du langage, mais seules quelques notions vous seront nécessaires.
+
+Lorsque l’on passe une référence à une fonction, l’objet référé sera modifié dans la fonction appelante s'il est modifié dans la fonction appelée. Vous utilisez ce principe lorsque vous implémenterez l’intersection des
+rayons avec des surfaces. Soit le code suivant :
+
+```cpp
+void Raytracer::trace(const Scene& scene,
+					  Ray ray, int ray_depth,
+					  double3* out_color, double* out_z_depth)
+{
+    //double3* out_color,out_z_depth sont des pointers. (Ils pointent vers des endroits dans la memoire.)
+    
+	Intersection hit;
+	if(scene.container->intersect(ray,EPSILON,*out_z_depth,&hit)) {	
+	    
+	    //& Reference: Permet d'obtenir le pointeur de la variable hit.
+	    
+	    //* Deference: Permet d'obtenir la valeur auquelle le pointeur pointe en memoire.
+	    ...
+	}
+}
+```
+
+Notez que certaines variables sont accompagnées du mot clé <mark style="background-color:yellow;">const</mark>  qui indique que ces variables ne peuvent pas être modifiées. Prenez bien soin de parcourir les fichiers présents dans le devoir et de lire les commentaires pour mieux comprendre le fonctionnement du programme. Les commentaires contiennent aussi des pistes à suivre et des indices.
+
+<!-- Markdeep: --><style class="fallback">body{visibility:hidden}</style><script src="https://morgan3d.github.io/markdeep/latest/markdeep.min.js?" charset="utf-8"></script>
